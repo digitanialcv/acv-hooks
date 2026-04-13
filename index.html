@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Générateur de hooks ACV</title>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --bg: #F7F5F0;
+    --surface: #FFFFFF;
+    --surface2: #F0EDE6;
+    --text: #1A1714;
+    --text-muted: #7A7570;
+    --border: rgba(26,23,20,0.1);
+    --border-strong: rgba(26,23,20,0.2);
+    --accent: #C4A882;
+    --accent-dark: #8B6E4E;
+    --pill-a-bg: #EDE8F5;
+    --pill-a-text: #4A2D8C;
+    --pill-a-border: #C4B4E8;
+    --pill-c-bg: #E0F0E8;
+    --pill-c-text: #1A5C3A;
+    --pill-c-border: #8ECBAA;
+    --pill-v-bg: #FDF0DC;
+    --pill-v-text: #7A4A10;
+    --pill-v-border: #E8C47A;
+    --radius: 12px;
+    --radius-sm: 8px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    padding: 2rem 1rem 4rem;
+  }
+
+  .container { max-width: 640px; margin: 0 auto; }
+
+  header { text-align: center; margin-bottom: 2.5rem; }
+
+  header .eyebrow {
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--accent-dark);
+    font-weight: 500;
+    margin-bottom: 10px;
+  }
+
+  header h1 {
+    font-family: 'Instrument Serif', serif;
+    font-size: 36px;
+    font-weight: 400;
+    line-height: 1.15;
+    color: var(--text);
+    margin-bottom: 10px;
+  }
+
+  header h1 em { font-style: italic; color: var(--accent-dark); }
+
+  header p { font-size: 14px; color: var(--text-muted); line-height: 1.6; }
+
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1.5rem;
+    margin-bottom: 1rem;
+  }
+
+  .card-title {
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    font-weight: 500;
+    margin-bottom: 1rem;
+  }
+
+  .field { margin-bottom: 1rem; }
+  .field:last-child { margin-bottom: 0; }
+
+  label {
+    display: block;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--text-muted);
+    margin-bottom: 6px;
+    letter-spacing: 0.02em;
+  }
+
+  input[type="text"], textarea {
+    width: 100%;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 10px 14px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    color: var(--text);
+    outline: none;
+    transition: border-color 0.15s;
+  }
+
+  input[type="text"]:focus, textarea:focus {
+    border-color: var(--accent);
+    background: var(--surface);
+  }
+
+  input::placeholder, textarea::placeholder { color: #B0ACA6; }
+
+  textarea { resize: vertical; min-height: 80px; line-height: 1.5; }
+
+  .row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+  .pillars-wrap { display: flex; gap: 8px; flex-wrap: wrap; }
+
+  .pill {
+    padding: 7px 16px;
+    border-radius: 999px;
+    border: 1px solid var(--border-strong);
+    font-size: 13px;
+    cursor: pointer;
+    background: var(--surface2);
+    color: var(--text-muted);
+    transition: all 0.15s;
+    user-select: none;
+  }
+
+  .pill:hover { background: var(--surface); }
+  .pill.active-a { background: var(--pill-a-bg); color: var(--pill-a-text); border-color: var(--pill-a-border); }
+  .pill.active-c { background: var(--pill-c-bg); color: var(--pill-c-text); border-color: var(--pill-c-border); }
+  .pill.active-v { background: var(--pill-v-bg); color: var(--pill-v-text); border-color: var(--pill-v-border); }
+
+  .qty-row { display: flex; align-items: center; gap: 14px; }
+  .qty-row label { margin: 0; }
+
+  input[type="range"] {
+    flex: 1;
+    height: 4px;
+    -webkit-appearance: none;
+    appearance: none;
+    background: var(--border-strong);
+    border-radius: 2px;
+    outline: none;
+  }
+
+  input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: var(--accent-dark);
+    cursor: pointer;
+  }
+
+  .qty-val {
+    font-size: 15px;
+    font-weight: 500;
+    min-width: 20px;
+    text-align: center;
+    color: var(--accent-dark);
+  }
+
+  .btn {
+    width: 100%;
+    padding: 14px;
+    border-radius: var(--radius);
+    border: none;
+    background: var(--text);
+    color: #F7F5F0;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 15px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.15s, transform 0.1s;
+    margin-top: 0.5rem;
+  }
+
+  .btn:hover { background: #2D2A26; }
+  .btn:active { transform: scale(0.99); }
+  .btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
+
+  .results { margin-top: 1.5rem; }
+
+  .pillar-block { margin-bottom: 1.5rem; }
+
+  .pillar-label {
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 4px 12px;
+    border-radius: 999px;
+    display: inline-block;
+    margin-bottom: 12px;
+  }
+
+  .label-a { background: var(--pill-a-bg); color: var(--pill-a-text); }
+  .label-c { background: var(--pill-c-bg); color: var(--pill-c-text); }
+  .label-v { background: var(--pill-v-bg); color: var(--pill-v-text); }
+
+  .hook-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 16px 56px 16px 18px;
+    margin-bottom: 8px;
+    font-size: 15px;
+    line-height: 1.65;
+    color: var(--text);
+    position: relative;
+    transition: border-color 0.15s;
+  }
+
+  .hook-card:hover { border-color: var(--border-strong); }
+
+  .copy-btn {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    font-size: 11px;
+    padding: 4px 10px;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+    background: var(--surface2);
+    cursor: pointer;
+    color: var(--text-muted);
+    font-family: 'DM Sans', sans-serif;
+    transition: all 0.15s;
+  }
+
+  .copy-btn:hover { background: var(--surface); border-color: var(--border-strong); }
+  .copy-btn.copied { color: var(--pill-c-text); border-color: var(--pill-c-border); background: var(--pill-c-bg); }
+
+  .loading {
+    text-align: center;
+    padding: 2rem 0;
+    color: var(--text-muted);
+    font-size: 14px;
+  }
+
+  .loading-dots::after {
+    content: '';
+    animation: dots 1.2s steps(4, end) infinite;
+  }
+
+  @keyframes dots {
+    0%, 20% { content: ''; }
+    40% { content: '.'; }
+    60% { content: '..'; }
+    80%, 100% { content: '...'; }
+  }
+
+  .error {
+    font-size: 13px;
+    color: #B03030;
+    padding: 10px 14px;
+    background: #FDF0F0;
+    border-radius: var(--radius-sm);
+    border: 1px solid #E8C4C4;
+  }
+
+  .divider { border: none; border-top: 1px solid var(--border); margin: 1.25rem 0; }
+
+  @media (max-width: 520px) {
+    .row { grid-template-columns: 1fr; }
+    header h1 { font-size: 28px; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <header>
+    <p class="eyebrow">Méthode ACV — Digitania</p>
+    <h1>Génère tes hooks<br><em>Instagram</em></h1>
+    <p>Remplis les infos sur ton business et génère des hooks<br>adaptés à ta niche et à ta cible.</p>
+  </header>
+
+  <div class="card">
+    <p class="card-title">Ton business</p>
+    <div class="row">
+      <div class="field">
+        <label>Ta niche</label>
+        <input type="text" id="niche" placeholder="ex: yoga, cuisine, coaching..." />
+      </div>
+      <div class="field">
+        <label>Ta cible idéale</label>
+        <input type="text" id="cible" placeholder="ex: femmes 30-45 ans..." />
+      </div>
+    </div>
+    <div class="field">
+      <label>Ce que tu proposes <span style="color: var(--accent-dark); font-weight: 400;">— détaille un maximum</span></label>
+      <textarea id="offre" placeholder="Plus tu détailles, plus tes hooks seront percutants et uniques. Ex: programme en ligne de 8 semaines pour les femmes de 30-45 ans qui veulent retrouver leur énergie durablement sans régime ni sport intensif, via la régulation hormonale et l'alimentation intuitive..."></textarea>
+      <p style="font-size: 11px; color: var(--accent-dark); margin-top: 6px; line-height: 1.5;">Parle de ta méthode, de ce qui te différencie, des résultats concrets de tes clientes, de ta propre histoire si elle est liée. Plus c'est précis, plus les hooks seront uniques.</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <p class="card-title">Paramètres</p>
+    <div class="field">
+      <label>Pilier(s) souhaité(s)</label>
+      <div class="pillars-wrap">
+        <div class="pill active-a" data-pillar="A" onclick="togglePillar(this)">A — Attirer</div>
+        <div class="pill" data-pillar="C" onclick="togglePillar(this)">C — Chauffer</div>
+        <div class="pill" data-pillar="V" onclick="togglePillar(this)">V — Vendre</div>
+      </div>
+    </div>
+    <hr class="divider" />
+    <div class="qty-row">
+      <label>Idées par pilier</label>
+      <input type="range" min="1" max="10" value="3" step="1" id="qty" oninput="document.getElementById('qty-val').textContent=this.value" />
+      <span class="qty-val" id="qty-val">3</span>
+    </div>
+  </div>
+
+  <button class="btn" id="gen-btn" onclick="generate()">Générer mes hooks</button>
+
+  <div class="results" id="results"></div>
+</div>
+
+<script>
+const activePillars = new Set(['A']);
+
+function togglePillar(el) {
+  const p = el.dataset.pillar;
+  if (activePillars.has(p)) {
+    if (activePillars.size === 1) return;
+    activePillars.delete(p);
+    el.className = 'pill';
+  } else {
+    activePillars.add(p);
+    el.className = 'pill active-' + p.toLowerCase();
+  }
+}
+
+async function generate() {
+  const niche = document.getElementById('niche').value.trim();
+  const cible = document.getElementById('cible').value.trim();
+  const offre = document.getElementById('offre').value.trim();
+  const qty = document.getElementById('qty').value;
+
+  if (!niche || !cible || !offre) {
+    document.getElementById('results').innerHTML = '<p class="error">Remplis tous les champs avant de générer.</p>';
+    return;
+  }
+
+  const btn = document.getElementById('gen-btn');
+  btn.disabled = true;
+  document.getElementById('results').innerHTML = '<div class="loading"><span class="loading-dots">Génération en cours</span></div>';
+
+  const pillarsArray = [...activePillars].sort();
+
+  try {
+    const res = await fetch('/api/generate', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ niche, cible, offre, pillars: pillarsArray, qty })
+    });
+
+    const parsed = await res.json();
+
+    if (parsed.error) {
+      document.getElementById('results').innerHTML = `<p class="error">${parsed.error}</p>`;
+      btn.disabled = false;
+      return;
+    }
+
+    let html = '<div style="margin-top: 0.5rem;">';
+    const labelClass = { A: 'label-a', C: 'label-c', V: 'label-v' };
+    const labelText = { A: 'A — Attirer', C: 'C — Chauffer', V: 'V — Vendre' };
+
+    for (const p of pillarsArray) {
+      if (!parsed.pillars[p]) continue;
+      html += `<div class="pillar-block">
+        <div class="pillar-label ${labelClass[p]}">${labelText[p]}</div>`;
+      parsed.pillars[p].forEach((hook, i) => {
+        const id = 'hook-' + p + i + Date.now();
+        html += `<div class="hook-card" id="${id}">
+          <button class="copy-btn" onclick="copyHook('${id}', this)">Copier</button>
+          ${hook}
+        </div>`;
+      });
+      html += '</div>';
+    }
+
+    html += '</div>';
+    document.getElementById('results').innerHTML = html;
+  } catch(e) {
+    document.getElementById('results').innerHTML = '<p class="error">Une erreur est survenue. Réessaie.</p>';
+  }
+
+  btn.disabled = false;
+}
+
+function copyHook(id, btn) {
+  const card = document.getElementById(id);
+  const clone = card.cloneNode(true);
+  clone.querySelector('.copy-btn').remove();
+  const text = clone.textContent.trim();
+  navigator.clipboard.writeText(text).then(() => {
+    btn.textContent = 'Copié !';
+    btn.classList.add('copied');
+    setTimeout(() => {
+      btn.textContent = 'Copier';
+      btn.classList.remove('copied');
+    }, 1800);
+  });
+}
+</script>
+</body>
+</html>
